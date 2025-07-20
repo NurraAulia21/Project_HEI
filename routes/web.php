@@ -1,8 +1,8 @@
 <?php
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use Illuminate\Http\Request; // Tambahkan ini
-use Illuminate\Support\Facades\Auth; // Tambahkan ini
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 
 
@@ -29,3 +29,4 @@ Route::post('/logout', function (Request $request) {
 // })->name('google.login');
 Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('google.login');
 Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
+

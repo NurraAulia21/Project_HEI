@@ -5,6 +5,7 @@
         "This file is @generated automatically"
     ],
     "content-hash": "6d69f15e025827a45763378fea39ea2e",
+    "content-hash": "88970a0117c062eed55fa8728fc43833",
     "packages": [
         {
             "name": "brick/math",
@@ -511,6 +512,7 @@
             "time": "2025-03-06T22:45:56+00:00"
         },
         {
+<<<<<<< HEAD
             "name": "firebase/php-jwt",
             "version": "v6.11.1",
             "source": {
@@ -574,6 +576,8 @@
             "time": "2025-04-09T20:32:01+00:00"
         },
         {
+=======
+>>>>>>> b3d05f1be02f62358aaef0a99c146a8da5f57b9f
             "name": "fruitcake/php-cors",
             "version": "v1.3.0",
             "source": {
@@ -1453,6 +1457,7 @@
             "time": "2025-03-19T13:51:03+00:00"
         },
         {
+<<<<<<< HEAD
             "name": "laravel/socialite",
             "version": "v5.21.0",
             "source": {
@@ -1525,6 +1530,8 @@
             "time": "2025-05-19T12:56:37+00:00"
         },
         {
+=======
+>>>>>>> b3d05f1be02f62358aaef0a99c146a8da5f57b9f
             "name": "laravel/tinker",
             "version": "v2.10.1",
             "source": {
@@ -1968,6 +1975,7 @@
             "time": "2024-09-21T08:32:55+00:00"
         },
         {
+<<<<<<< HEAD
             "name": "league/oauth1-client",
             "version": "v1.11.0",
             "source": {
@@ -2044,6 +2052,8 @@
             "time": "2024-12-10T19:59:05+00:00"
         },
         {
+=======
+>>>>>>> b3d05f1be02f62358aaef0a99c146a8da5f57b9f
             "name": "league/uri",
             "version": "7.5.1",
             "source": {
@@ -2719,6 +2729,7 @@
             "time": "2025-05-08T08:14:37+00:00"
         },
         {
+<<<<<<< HEAD
             "name": "paragonie/constant_time_encoding",
             "version": "v3.0.0",
             "source": {
@@ -2836,6 +2847,8 @@
             "time": "2020-10-15T08:29:30+00:00"
         },
         {
+=======
+>>>>>>> b3d05f1be02f62358aaef0a99c146a8da5f57b9f
             "name": "phpoption/phpoption",
             "version": "1.9.3",
             "source": {
@@ -2911,6 +2924,7 @@
             "time": "2024-07-20T21:41:07+00:00"
         },
         {
+<<<<<<< HEAD
             "name": "phpseclib/phpseclib",
             "version": "3.0.46",
             "source": {
@@ -3021,6 +3035,8 @@
             "time": "2025-06-26T16:29:55+00:00"
         },
         {
+=======
+>>>>>>> b3d05f1be02f62358aaef0a99c146a8da5f57b9f
             "name": "psr/clock",
             "version": "1.0.0",
             "source": {
@@ -8532,12 +8548,20 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
+<<<<<<< HEAD
     "stability-flags": [],
+=======
+    "stability-flags": {},
+>>>>>>> b3d05f1be02f62358aaef0a99c146a8da5f57b9f
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "^8.2"
     },
+<<<<<<< HEAD
     "platform-dev": [],
+=======
+    "platform-dev": {},
+>>>>>>> b3d05f1be02f62358aaef0a99c146a8da5f57b9f
     "plugin-api-version": "2.6.0"
 }
