@@ -1,12 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\TestController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-// Dashboard routes
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-Route::post('/dashboard/submit-answer', [DashboardController::class, 'submitAnswer'])->name('dashboard.submit-answer');
+Route::get('/test', [TestController::class, 'index'])->name('test');
+Route::post('/dashboard/submit-answer', [TestController::class, 'submitAnswer'])->name('dashboard.submit-answer');
