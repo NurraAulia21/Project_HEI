@@ -5,15 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Personality Test</title>
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
-    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/landing-page.css') }}">
 </head>
 <body class="dashboard-bg">
-    <!-- Navbar -->
-    <nav class="navbar">
-        <button id="personality-types-btn" class="navbar-btn">
-            Personality Types
-        </button>
-    </nav>
+    @extends('layouts.app')
+    @section('content')
+    @include('components.navbar')
+
     <!-- Main Content -->
     <main class="main-content">
         <div class="main-card">
@@ -103,5 +101,22 @@
         //     document.getElementById('login-overlay').classList.remove('hidden');
         // };
     </script>
+    <section class="section-highlight">
+        <div class="highlight-container">
+            <div class="highlight-text">
+                <h2 class="highlight-subtitle">PERSONALITY TYPES</h2>
+                <h1 class="highlight-title">Understand others</h1>
+                <p class="highlight-desc">
+                    In our free type descriptions you’ll learn what really drives, inspires, and worries different personality types, helping you build more meaningful relationships.
+                </p>
+                <div class="highlight-buttons">
+                    <a href="#" class="highlight-btn primary">Personality Types</a>
+                </div>
+            </div>
+            <div class="highlight-image">
+                <img src="/img/illustration-people.png" alt="Illustration" />
+            </div>
+        </div>
+    </section>
 </body>
 </html>
