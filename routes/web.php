@@ -8,4 +8,4 @@ Route::get('/', function () {
 });
 
 Route::get('/test', [TestController::class, 'index'])->name('test');
-Route::post('/dashboard/submit-answer', [TestController::class, 'submitAnswer'])->name('dashboard.submit-answer');
+Route::post('/test/submit-answer', [TestController::class, 'submitAnswer'])->name('test.submit-answer');
