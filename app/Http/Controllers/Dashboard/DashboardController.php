@@ -19,6 +19,26 @@ class DashboardController extends Controller
     }
 
     /**
+     * Store a new question (manual input)
+     */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'question_text' => 'required|string',
+            'category' => 'required|in:H,E,I',
+            'order' => 'required|integer|min:1|unique:questions,order',
+            'is_active' => 'boolean'
+        ]);
+
+        $data = $request->all();
+        $data['is_active'] = $request->has('is_active') ? true : false;
+
+        Question::create($data);
+
+        return redirect()->route('dashboard.index')->with('success', 'Pertanyaan berhasil ditambahkan!');
+    }
+
+    /**
      * Show the form for editing a question
      */
     public function edit(Question $question)
@@ -35,15 +55,38 @@ class DashboardController extends Controller
             'question_text' => 'required|string',
             'category' => 'required|in:H,E,I',
             'order' => 'required|integer|min:1|unique:questions,order,' . $question->id,
-            'is_active' => 'boolean'
+            'is_active' => 'sometimes|boolean'
         ]);
 
-        $data = $request->all();
-        $data['is_active'] = $request->has('is_active') ? true : false;
+        $data = [
+            'question_text' => $request->question_text,
+            'category' => $request->category,
+            'order' => $request->order,
+        ];
+
+        if ($request->has('is_active') && $request->route()->getName() === 'dashboard.store') {
+            $data['is_active'] = $request->has('is_active') ? true : false;
+        } elseif ($request->has('is_active') && $request->route()->getName() === 'dashboard.update') {
+            $data['is_active'] = filter_var($request->is_active, FILTER_VALIDATE_BOOLEAN);
+        }
 
         $question->update($data);
 
         return redirect()->route('dashboard.index')->with('success', 'Pertanyaan berhasil diupdate!');
+    }
+
+    /**
+     * Toggle question status (AJAX)
+     */
+    public function toggleStatus(Question $question)
+    {
+        $question->update(['is_active' => !$question->is_active]);
+        
+        return response()->json([
+            'success' => true,
+            'is_active' => $question->is_active,
+            'message' => 'Status pertanyaan berhasil diubah!'
+        ]);
     }
 
     /**

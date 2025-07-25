@@ -112,25 +112,6 @@
             margin-top: 0.25rem;
         }
 
-        .form-check {
-            display: flex;
-            align-items: center;
-            margin-top: 1rem;
-        }
-
-        .form-check-input {
-            width: 20px;
-            height: 20px;
-            margin-right: 0.75rem;
-            accent-color: var(--green-soft);
-            cursor: pointer;
-        }
-
-        .form-check-label {
-            color: var(--text-primary);
-            cursor: pointer;
-        }
-
         .btn {
             border: none;
             padding: 12px 24px;
@@ -212,6 +193,20 @@
                 0 0 0 2px var(--red-soft);
         }
 
+        .info-box {
+            background: rgba(168, 200, 236, 0.1);
+            border: 1px solid rgba(168, 200, 236, 0.3);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-text {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
         @media (max-width: 768px) {
             .text-h1 { font-size: 2rem; }
             body { padding: 1rem; }
@@ -249,6 +244,12 @@
 
         <!-- Form Edit -->
         <div class="section">
+            <div class="info-box">
+                <p class="info-text">
+                    <strong>💡 Info:</strong> Status aktif/non-aktif pertanyaan dapat diubah langsung di halaman dashboard menggunakan toggle switch pada tabel.
+                </p>
+            </div>
+
             <form action="{{ route('dashboard.update', $question) }}" method="POST">
                 @csrf
                 @method('PUT')
@@ -293,22 +294,6 @@
                     @error('order')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
-                </div>
-
-                <div class="form-group">
-                    <div class="form-check">
-                        <input 
-                            type="checkbox" 
-                            name="is_active" 
-                            id="is_active" 
-                            class="form-check-input" 
-                            value="1" 
-                            {{ old('is_active', $question->is_active) ? 'checked' : '' }}>
-                        <label for="is_active" class="form-check-label">
-                            Aktifkan Pertanyaan
-                        </label>
-                    </div>
-                    <div class="form-text">Uncheck untuk menyembunyikan pertanyaan dari test</div>
                 </div>
 
                 <div class="d-flex justify-content-between" style="margin-top: 2rem;">

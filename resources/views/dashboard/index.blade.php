@@ -84,6 +84,8 @@
             text-decoration: none;
             display: inline-block;
             text-align: center;
+            font-family: inherit;
+            font-size: 1rem;
         }
 
         .btn:hover {
@@ -115,6 +117,74 @@
 
         .btn-sm {
             padding: 8px 16px;
+            font-size: 0.875rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 8px;
+            background: var(--bg-card);
+            box-shadow: 
+                inset 3px 3px 6px var(--shadow-dark),
+                inset -3px -3px 6px var(--shadow-light);
+            font-family: inherit;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            box-shadow: 
+                inset 4px 4px 8px var(--shadow-dark),
+                inset -4px -4px 8px var(--shadow-light),
+                0 0 0 2px var(--blue-soft);
+        }
+
+        .form-control::placeholder {
+            color: var(--text-muted);
+        }
+
+        textarea.form-control {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        select.form-control {
+            cursor: pointer;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+
+        .form-check-input {
+            width: 18px;
+            height: 18px;
+            margin-right: 0.5rem;
+            accent-color: var(--green-soft);
+            cursor: pointer;
+        }
+
+        .form-check-label {
+            color: var(--text-primary);
+            cursor: pointer;
             font-size: 0.875rem;
         }
 
@@ -200,7 +270,7 @@
         }
 
         .badge-integrity {
-            background: var(--green-soft);
+            background: #ffa981;
             color: white;
         }
 
@@ -306,6 +376,93 @@
             display: none;
         }
 
+        .form-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 0.5fr 0.5fr;
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .manual-input-form {
+            background: rgba(168, 213, 186, 0.1);
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 2px solid rgba(168, 213, 186, 0.3);
+            margin-bottom: 2rem;
+        }
+
+        .invalid-feedback {
+            display: block;
+            width: 100%;
+            margin-top: 0.25rem;
+            font-size: 0.75rem;
+            color: var(--red-soft);
+        }
+
+        .is-invalid {
+            box-shadow: 
+                inset 3px 3px 6px var(--shadow-dark),
+                inset -3px -3px 6px var(--shadow-light),
+                0 0 0 2px var(--red-soft);
+        }
+
+        /* Toggle Switch Styles */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--red-soft);
+            transition: 0.4s;
+            border-radius: 24px;
+            box-shadow: 
+                inset 2px 2px 4px var(--shadow-dark),
+                inset -2px -2px 4px var(--shadow-light);
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+            box-shadow: 
+                2px 2px 4px var(--shadow-dark),
+                -2px -2px 4px var(--shadow-light);
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--green-soft);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        .toggle-switch.loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
         @media (max-width: 768px) {
             .text-h1 { font-size: 2rem; }
             .text-h2 { font-size: 1.75rem; }
@@ -323,6 +480,10 @@
             }
             .filter-group {
                 min-width: 100%;
+            }
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
             }
         }
     </style>
@@ -372,6 +533,78 @@
             <div class="stat-card">
                 <div class="stat-number">{{ $questions->where('category', 'I')->count() }}</div>
                 <div class="stat-label">Integrity</div>
+            </div>
+        </div>
+
+        <!-- Manual Input Form -->
+        <div class="card">
+            <h3 class="text-h3 mb-4">Input Pertanyaan Manual</h3>
+            <div class="manual-input-form">
+                <form action="{{ route('dashboard.store') }}" method="POST">
+                    @csrf
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="question_text" class="form-label">Pertanyaan</label>
+                            <textarea 
+                                name="question_text" 
+                                id="question_text" 
+                                class="form-control @error('question_text') is-invalid @enderror" 
+                                placeholder="Masukkan teks pertanyaan..."
+                                required>{{ old('question_text') }}</textarea>
+                            @error('question_text')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label for="category" class="form-label">Kategori</label>
+                            <select name="category" id="category" class="form-control @error('category') is-invalid @enderror" required>
+                                <option value="">Pilih Kategori</option>
+                                <option value="H" {{ old('category') == 'H' ? 'selected' : '' }}>H (Harmony)</option>
+                                <option value="E" {{ old('category') == 'E' ? 'selected' : '' }}>E (Excellence)</option>
+                                <option value="I" {{ old('category') == 'I' ? 'selected' : '' }}>I (Integrity)</option>
+                            </select>
+                            @error('category')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label for="order" class="form-label">Urutan</label>
+                            <input 
+                                type="number" 
+                                name="order" 
+                                id="order" 
+                                class="form-control @error('order') is-invalid @enderror" 
+                                min="1" 
+                                value="{{ old('order') }}" 
+                                placeholder="1"
+                                required>
+                            @error('order')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input 
+                                    type="checkbox" 
+                                    name="is_active" 
+                                    id="is_active" 
+                                    class="form-check-input" 
+                                    value="1" 
+                                    {{ old('is_active') ? 'checked' : '' }}>
+                                <label for="is_active" class="form-check-label">
+                                    Aktif
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-success">➕ Tambah</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -453,11 +686,10 @@
                                     @endif
                                 </td>
                                 <td>
-                                    @if($question->is_active)
-                                        <span class="badge badge-active">Aktif</span>
-                                    @else
-                                        <span class="badge badge-inactive">Tidak Aktif</span>
-                                    @endif
+                                    <label class="toggle-switch" data-question-id="{{ $question->id }}">
+                                        <input type="checkbox" {{ $question->is_active ? 'checked' : '' }}>
+                                        <span class="toggle-slider"></span>
+                                    </label>
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center" style="gap: 0.5rem;">
@@ -475,43 +707,80 @@
                     </table>
                 </div>
             @else
-                
                 <div class="empty-state">
                     <div class="empty-icon">📋</div>
                     <h4 class="text-h4">Belum Ada Pertanyaan</h4>
-                    <p class="text-body">Mulai dengan mengimpor pertanyaan dari file CSV</p>
+                    <p class="text-body">Mulai dengan mengimpor pertanyaan dari file CSV atau menambahkan secara manual</p>
                 </div>
             @endif
         </div>
     </div>
 
     <script>
-        // Fungsi Filter
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
         document.addEventListener('DOMContentLoaded', function() {
+            
+            const toggleSwitches = document.querySelectorAll('.toggle-switch'); 
+            
+            toggleSwitches.forEach(function(toggleSwitch) {
+                const checkbox = toggleSwitch.querySelector('input[type="checkbox"]'); 
+                const questionId = toggleSwitch.getAttribute('data-question-id'); 
+                
+                
+                checkbox.addEventListener('change', function() {
+                    
+                    toggleSwitch.classList.add('loading');
+                    
+                    
+                    fetch(`{{ route('dashboard.index') }}/${questionId}/toggle`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(response => response.json()) 
+                    .then(data => {
+                        if (data.success) {
+                            const row = toggleSwitch.closest('.question-row');
+                            row.setAttribute('data-status', data.is_active ? 'active' : 'inactive');
+
+                            updateStatistics();
+                        } else {
+                            checkbox.checked = !checkbox.checked;
+                            alert('Gagal mengubah status pertanyaan'); 
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        checkbox.checked = !checkbox.checked;
+                        alert('Terjadi kesalahan saat mengubah status'); 
+                    })
+                    .finally(() => {
+                        toggleSwitch.classList.remove('loading');
+                    });
+                });
+            });
+
+            
             const categoryFilter = document.getElementById('categoryFilter');
             const statusFilter = document.getElementById('statusFilter');
             const resetFilter = document.getElementById('resetFilter');
             const questionRows = document.querySelectorAll('.question-row');
 
             function applyFilters() {
-                const selectedCategory = categoryFilter.value;
-                const selectedStatus = statusFilter.value;
+                const selectedCategory = categoryFilter?.value || '';
+                const selectedStatus = statusFilter?.value || '';
 
                 questionRows.forEach(row => {
                     const rowCategory = row.getAttribute('data-category');
                     const rowStatus = row.getAttribute('data-status');
-
                     let showRow = true;
 
-                    // Filter Kategori
-                    if (selectedCategory && rowCategory !== selectedCategory) {
-                        showRow = false;
-                    }
-
-                    // Filter Status
-                    if (selectedStatus && rowStatus !== selectedStatus) {
-                        showRow = false;
-                    }
+                    if (selectedCategory && rowCategory !== selectedCategory) showRow = false;
+                    if (selectedStatus && rowStatus !== selectedStatus) showRow = false;
 
                     if (showRow) {
                         row.classList.remove('hidden');
@@ -519,21 +788,64 @@
                         row.classList.add('hidden');
                     }
                 });
-
             }
 
             function resetFilters() {
-                categoryFilter.value = '';
-                statusFilter.value = '';
-                questionRows.forEach(row => {
-                    row.classList.remove('hidden');
-                });
+                if (categoryFilter) categoryFilter.value = '';
+                if (statusFilter) statusFilter.value = '';
+                questionRows.forEach(row => row.classList.remove('hidden'));
             }
 
-            categoryFilter.addEventListener('change', applyFilters);
-            statusFilter.addEventListener('change', applyFilters);
-            resetFilter.addEventListener('click', resetFilters);
+            if (categoryFilter) categoryFilter.addEventListener('change', applyFilters);
+            if (statusFilter) statusFilter.addEventListener('change', applyFilters);
+            if (resetFilter) resetFilter.addEventListener('click', resetFilters);
+
+
+            const orderInput = document.getElementById('order');
+            if (orderInput && !orderInput.value) {
+                const existingOrders = Array.from(document.querySelectorAll('.question-row')).map(row => {
+                    const badge = row.querySelector('.badge-primary');
+                    return badge ? parseInt(badge.textContent) : 0;
+                });
+                
+                const maxOrder = existingOrders.length > 0 ? Math.max(...existingOrders) : 0;
+                orderInput.value = maxOrder + 1;
+            }
+
+
+            const form = document.querySelector('.manual-input-form form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const questionText = document.getElementById('question_text').value.trim();
+                    const category = document.getElementById('category').value;
+                    const order = document.getElementById('order').value;
+
+                    if (!questionText || !category || !order) {
+                        e.preventDefault(); 
+                        alert('Harap lengkapi semua field yang wajib diisi'); 
+                        return false;
+                    }
+
+                    const existingOrders = Array.from(document.querySelectorAll('.question-row')).map(row => {
+                        const badge = row.querySelector('.badge-primary');
+                        return badge ? parseInt(badge.textContent) : 0;
+                    });
+
+                    if (existingOrders.includes(parseInt(order))) {
+                        e.preventDefault(); 
+                        alert(`Urutan ${order} sudah digunakan. Silakan pilih urutan lain.`); 
+                        document.getElementById('order').focus(); 
+                        return false;
+                    }
+                });
+            }
         });
+
+        function updateStatistics() {
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        }
     </script>
 </body>
 </html>
