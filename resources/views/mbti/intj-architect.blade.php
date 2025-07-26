@@ -28,7 +28,7 @@
         </aside>
 
         <!-- Konten Utama -->
-        <main class="main-content">
+        <main class="main-content-mbti">
             <section id="introduction">
                 <h2 class="text-2xl font-bold mb-2">Introduction</h2>
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus.</p>

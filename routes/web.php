@@ -31,7 +31,7 @@ Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('g
 Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 
 Route::get('/test', [TestController::class, 'index'])->name('test');
-Route::post('/dashboard/submit-answer', [TestController::class, 'submitAnswer'])->name('dashboard.submit-answer');
+Route::post('/test/submit-answer', [TestController::class, 'submitAnswer'])->name('test.submit-answer');
 
 Route::get('/mbti/intj-architect', function () {
     return view('mbti.intj-architect');

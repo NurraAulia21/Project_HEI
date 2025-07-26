@@ -4,14 +4,21 @@
     <title>MBTI Page</title>
 
     <link rel="stylesheet" href="{{ asset('css/mbti.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/landing-page.css') }}">
+    <!-- <link rel="stylesheet" href="{{ asset('css/test.css') }}"> -->
     <!-- <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> -->
 
-    @stack('styles')
+    @yield('styles')
 </head>
 <body>
     @include('components.navbar')
-    @yield('content')
 
-    @stack('scripts')
+    <main style="padding-top: 50px">
+        @yield('content')
+    </main>
+
     @include('components.footer')
+
+    @yield('scripts')
 </body>
+

@@ -1,5 +1,4 @@
 body.dashboard-bg {
-    background: linear-gradient(135deg, #FDFDFC 0%, #a78bfa 100%);
     min-height: 120vh;
     font-family: 'Instrument Sans', sans-serif;
     margin: 0;
@@ -57,6 +56,14 @@ body.dashboard-bg {
 }
 .main-action-btn:hover {
     background: #7c3aed;
+}
+.logout{
+    padding-top: 12px;
+    padding-left: 23px;
+    height: 45px;
+    width: 110px;
+    margin-top: 15px;
+    margin-left: 600px;
 }
 .overlay-bg {
     position: fixed;
@@ -192,19 +199,17 @@ body.dashboard-bg {
     margin: 0 auto;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 3rem;
     flex-wrap: wrap;
 }
 
 .highlight-text {
-    flex: 1;
-    min-width: 280px;
+    width: 750px;
+    text-align: justify;
 }
 
 .highlight-subtitle {
-    color: #15803d;
-    font-size: 0.9rem;
+    color: #8a53f8;
+    font-size: 1.25rem;
     font-weight: bold;
     margin-bottom: 0.5rem;
     text-transform: uppercase;
@@ -212,7 +217,7 @@ body.dashboard-bg {
 }
 
 .highlight-title {
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: 700;
     color: #1f2937;
     margin-bottom: 1rem;

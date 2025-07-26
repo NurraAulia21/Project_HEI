@@ -6,9 +6,9 @@
     <title>Dashboard - Personality Test</title>
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
     <link rel="stylesheet" href="{{ asset('css/landing-page.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/mbti.css') }}">
 </head>
-<body class="dashboard-bg">
-    @extends('layouts.app')
+<body class="dashboard-bg" style="background: linear-gradient(135deg, #FDFDFC 0%, #a78bfa 100%);">
     @section('content')
     @include('components.navbar')
 
@@ -25,7 +25,7 @@
         </div>
     </main>
     <!-- Login Overlay -->
-    <div id="login-overlay" class="overlay-bg hidden">
+    <div id="login-overlay" class="overlay-bg hidden" style="margin-top: 60px;">
         <div class="overlay-card">
             <button id="close-login" class="overlay-close">&times;</button>
             <h2 class="overlay-title" style="margin-top: 0px; margin-bottom: 10px;">Login</h2>
@@ -53,7 +53,7 @@
         </div>
     </div>
     <!-- Register Overlay -->
-    <div id="register-overlay" class="overlay-bg hidden">
+    <div id="register-overlay" class="overlay-bg hidden" style="margin-top: 60px;">
         <div class="overlay-card">
             <button id="close-register" class="overlay-close">&times;</button>
             <h2 class="overlay-title" style="margin-top: 0px; margin-bottom: 10px;">Sign Up</h2>
@@ -101,7 +101,7 @@
         //     document.getElementById('login-overlay').classList.remove('hidden');
         // };
     </script>
-    <section class="section-highlight">
+    <!-- <section class="section-highlight">
         <div class="highlight-container">
             <div class="highlight-text">
                 <h2 class="highlight-subtitle">PERSONALITY TYPES</h2>
@@ -117,6 +117,30 @@
                 <img src="/img/illustration-people.png" alt="Illustration" />
             </div>
         </div>
+    </section> -->
+    <section id="abouthei" class="section-highlight">
+        <div class="highlight-container">
+            <div class="highlight-text">
+                <h2 class="highlight-subtitle">ABOUT HEI</h2>
+                <h1 class="highlight-title">HEI (Harmony, Excellence, Integrity)</h1>
+                <p class="highlight-desc">
+                    HEI is a personality test designed to help individuals understand themselves and others better. It focuses on the core values of Harmony, Excellence, and Integrity, providing insights into personal strengths and areas for growth.
+                </p>
+                <p class="highlight-desc">
+                    <b>Harmony</b> <br> Commitment Based on the Principles of Trust, Togetherness, Cooperation, Mutual Respect for Differences, Harmony and the Desire to Take Actions that Bring Good to Yourself and Others.
+                </p>
+                <p class="highlight-desc">
+                    <b>Excellence</b> <br> The ability to use knowledge, skills, and attitudes to complete every job and task with the best quality for oneself and one's environment.
+                </p>
+                <p class="highlight-desc">
+                    <b>Integrity</b> <br> Always maintain an attitude of following applicable norms and ethics by maintaining good relationships with others, being honest, trustworthy, independent, keeping promises, obeying, and upholding the truth.
+                </p>
+            </div>
+            <div class="highlight-image">
+                <img src="img/hei-dummy.png" alt="Illustration" />
+            </div>
+        </div>
     </section>
+    @include('components.footer')
 </body>
 </html>

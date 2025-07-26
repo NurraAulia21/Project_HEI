@@ -1,66 +1,61 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HEI Assessment Dashboard</title>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+@extends('layouts.app')
+@include('components.navbar')
+
+@section('styles')
     <link rel="stylesheet" href="{{ asset('css/test.css') }}">
     <link rel="stylesheet" href="{{ asset('css/landing-page.css') }}">
-</head>
-<body>
-    <div class="container">
-        <!-- Header -->
-        <div class="section">
-            <h1 class="text-h1">HEI Personality Assessment</h1>
-            <p class="text-body">Jawab pertanyaan-pertanyaan berikut untuk mengetahui tipe kepribadian HEI Anda</p>
-        </div>
+    <link rel="stylesheet" href="{{ asset('css/mbti.css') }}">
+@endsection
 
-        <!-- Progress -->
-        <div class="progress-container">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                <span class="text-h4">Assessment Progress</span>
-                <span class="text-h3" style="color: #6366f1;" id="progress-text">0%</span>
-            </div>
-            <div class="progress-bar">
-                <div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
-            </div>
-            <p class="text-body" style="margin-top: 1rem; color: var(--text-muted);" id="progress-detail">0 of {{ count($questions) }} questions completed</p>
-        </div>
-
-        <div class="success-message" id="success-message">
-            Jawaban berhasil disimpan!
-        </div>
-
-        <!-- Questions -->
-        @foreach($questions as $index => $question)
-        <div class="question-card" data-question-id="{{ $question->id }}">
-            <p class="text-body" style="color: var(--text-muted);">Question {{ $index + 1 }} of {{ count($questions) }}</p>
-            <h3 class="text-h3" style="margin: 1.5rem 0;">{{ $question->question_text }}</h3>
-            
-            <div class="answer-options">
-                <button class="answer-option text-body" data-value="1">Strongly Disagree</button>
-                <button class="answer-option text-body" data-value="2">Disagree</button>
-                <button class="answer-option text-body" data-value="3">Neutral</button>
-                <button class="answer-option text-body" data-value="4">Agree</button>
-                <button class="answer-option text-body" data-value="5">Strongly Agree</button>
-            </div>
-        </div>
-        @endforeach
-
-        <button class="btn-submit text-body" id="submit-btn" disabled>
-            Submit All Answers
-        </button>
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button type="submit" class="main-action-btn">Logout</button>
-        </form>
+@section('content')
+<div class="container test-page">
+    <!-- Header -->
+    <div class="section">
+        <h1 class="text-h1">HEI Personality Assessment</h1>
+        <p class="text-body">Jawab pertanyaan-pertanyaan berikut untuk mengetahui tipe kepribadian HEI Anda</p>
     </div>
 
-    <script>
-        document.querySelector('meta[name="csrf-token"]').setAttribute('content', '{{ csrf_token() }}');
+    <!-- Progress -->
+    <div class="progress-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <span class="text-h4">Assessment Progress</span>
+            <span class="text-h3" style="color: #6366f1;" id="progress-text">0%</span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
+        </div>
+        <p class="text-body" style="margin-top: 1rem; color: var(--text-muted);" id="progress-detail">0 of {{ count($questions) }} questions completed</p>
+    </div>
+
+    <div class="success-message" id="success-message">
+        Jawaban berhasil disimpan!
+    </div>
+
+    <!-- Questions -->
+    @foreach($questions as $index => $question)
+    <div class="question-card" data-question-id="{{ $question->id }}">
+        <p class="text-body" style="color: var(--text-muted);">Question {{ $index + 1 }} of {{ count($questions) }}</p>
+        <h3 class="text-h3" style="margin: 1.5rem 0;">{{ $question->question_text }}</h3>
         
+        <div class="answer-options">
+            <button class="answer-option text-body" data-value="1">Strongly Disagree</button>
+            <button class="answer-option text-body" data-value="2">Disagree</button>
+            <button class="answer-option text-body" data-value="3">Neutral</button>
+            <button class="answer-option text-body" data-value="4">Agree</button>
+            <button class="answer-option text-body" data-value="5">Strongly Agree</button>
+        </div>
+    </div>
+    @endforeach
+
+    <button class="btn-submit text-body" id="submit-btn" disabled>
+        Submit All Answers
+    </button>
+</div>
+@endsection
+
+@section('scripts')
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
         const answers = {};
         const totalQuestions = parseInt('{{ count($questions) }}');
         let answeredQuestions = 0;
@@ -71,10 +66,12 @@
                 const questionId = questionCard.dataset.questionId;
                 const value = this.dataset.value;
 
+                // Hapus 'selected' dari semua jawaban di satu soal
                 questionCard.querySelectorAll('.answer-option').forEach(opt => {
                     opt.classList.remove('selected');
                 });
 
+                // Tambah class 'selected' ke tombol yang diklik
                 this.classList.add('selected');
 
                 if (!answers[questionId]) {
@@ -102,14 +99,13 @@
             this.textContent = 'Submitting...';
 
             document.getElementById('success-message').style.display = 'block';
-            
+
             setTimeout(() => {
                 this.textContent = 'Answers Submitted Successfully!';
                 this.style.background = 'var(--green-soft)';
             }, 1000);
-
-            // console.log('Answers to submit:', answers);
         });
-    </script>
-</body>
-</html>
+    });
+</script>
+
+@endsection

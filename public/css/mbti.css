@@ -7,7 +7,7 @@ html, body {
     box-sizing: border-box;
 }
 body{
-    background: linear-gradient(135deg, #FDFDFC 0%, #a78bfa 100%);
+    background: #e6e7ee;
     min-height: 100vh;
     font-family: 'Instrument Sans', sans-serif;
     margin: 0;
@@ -15,7 +15,7 @@ body{
 
 .navbar {
     height: 30px;
-    width: 98%;
+    width: 100%;
     background: rgb(255, 255, 255);
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     backdrop-filter: blur(8px);
@@ -276,7 +276,7 @@ body{
     text-decoration: underline;
 }
 
-.main-content section {
+.main-content-mbti section {
     margin-bottom: 40px;
     background-color: #ffffff;
     padding: 20px;

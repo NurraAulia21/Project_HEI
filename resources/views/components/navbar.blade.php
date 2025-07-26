@@ -18,12 +18,12 @@
                         <p class="dropdown-desc">
                             Intuitive (<b>N</b>) and Thinking (<b>T</b>) personality types, known for their rationality, impartiality, and intellectual excellence.
                         </p>
-                        <div class="dropdown-buttons flex flex-wrap gap-2 mt-2">
+                        <!-- <div class="dropdown-buttons flex flex-wrap gap-2 mt-2">
                             <a href="{{ url('mbti/intj-architect') }}" class="dropdown-btn btn-purple">Architect</a>
                             <a href="#" class="dropdown-btn btn-purple">Logician</a>
                             <a href="#" class="dropdown-btn btn-purple">Commander</a>
                             <a href="#" class="dropdown-btn btn-purple">Debater</a>
-                        </div>
+                        </div> -->
                     </div>
                     <!-- Diplomats -->
                     <div class="dropdown-row">
@@ -31,12 +31,12 @@
                         <p class="dropdown-desc">
                             Intuitive (<b>N</b>) and Feeling (<b>F</b>) personality types, known for their empathy, diplomatic skills, and passionate idealism.
                         </p>
-                        <div class="dropdown-buttons">
+                        <!-- <div class="dropdown-buttons">
                             <a href="#" class="dropdown-btn btn-green">Advocate</a>
                             <a href="#" class="dropdown-btn btn-green">Mediator</a>
                             <a href="#" class="dropdown-btn btn-green">Protagonist</a>
                             <a href="#" class="dropdown-btn btn-green">Campaigner</a>
-                        </div>
+                        </div> -->
                     </div>
                     <!-- Sentinels -->
                     <div class="dropdown-row">
@@ -44,12 +44,12 @@
                         <p class="dropdown-desc">
                             Observant (<b>S</b>) and Judging (<b>J</b>) personality types, known for their practicality and focus on order, security, and stability.
                         </p>
-                        <div class="dropdown-buttons">
+                        <!-- <div class="dropdown-buttons">
                             <a href="#" class="dropdown-btn btn-blue">Logistician</a>
                             <a href="#" class="dropdown-btn btn-blue">Defender</a>
                             <a href="#" class="dropdown-btn btn-blue">Executive</a>
                             <a href="#" class="dropdown-btn btn-blue">Consul</a>
-                        </div>
+                        </div> -->
                     </div>
                     <!-- Explorers -->
                     <div class="dropdown-row">
@@ -57,17 +57,30 @@
                         <p class="dropdown-desc">
                             Observant (<b>S</b>) and Prospecting (<b>P</b>) personality types, known for their spontaneity, ingenuity, and flexibility.
                         </p>
-                        <div class="dropdown-buttons">
+                        <!-- <div class="dropdown-buttons">
                             <a href="#" class="dropdown-btn btn-yellow">Virtuoso</a>
                             <a href="#" class="dropdown-btn btn-yellow">Adventurer</a>
                             <a href="#" class="dropdown-btn btn-yellow">Entrepreneur</a>
                             <a href="#" class="dropdown-btn btn-yellow">Entertainer</a>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>
         </div>
 
-        <button class="nav-button">About Us</button>
+        <a href="{{ url('/HEI-personality-test/#abouthei') }}">
+            <button class="nav-button">
+                About HEI
+            </button>
+        </a>    
+        <!-- <button id="take-test-btn" class="main-action-btn" style="margin-left: 610px; height: 50px; padding-top: 13px;">
+            Login
+        </button> -->
+         @if (Auth::check() && Request::is('test'))
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="logout main-action-btn">Logout</button>
+            </form>
+        @endif
     </div>
 </nav>
