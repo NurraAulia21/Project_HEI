@@ -5,7 +5,18 @@ use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Dashboard\AdminController;
 use App\Http\Controllers\Dashboard\QuestionController;
 use App\Http\Controllers\Dashboard\AnswerController;
+use App\Http\Controllers\TestController;
 use Illuminate\Http\Request;
+
+/*
+|--------------------------------------------------------------------------
+| Student Test Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/test', [TestController::class, 'index'])->name('test');
+Route::post('/test/submit-answer', [TestController::class, 'submitAnswer'])->name('test.submit-answer');
+Route::get('/test/result/{user}/{attempt?}', [TestController::class, 'showResult'])->name('test.result');
 
 /*
 |--------------------------------------------------------------------------
