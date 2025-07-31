@@ -18,6 +18,7 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'username',
         'name',
         'email',
         'password',
@@ -44,5 +45,19 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    // TAMBAHKAN RELATIONSHIP INI
+    public function answers()
+    {
+        return $this->hasMany(\App\Models\Answer::class);
+    }
+
+    // Method helper untuk mendapatkan jawaban berdasarkan kategori
+    public function getAnswersByCategory($category)
+    {
+        return $this->answers()->whereHas('question', function ($q) use ($category) {
+            $q->where('category', $category);
+        })->get();
     }
 }
