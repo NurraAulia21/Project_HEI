@@ -56,22 +56,37 @@
 @section('scripts')
     <script>
     document.addEventListener('DOMContentLoaded', function () {
+        console.log('DOM loaded, starting test functionality');
+        
         const answers = {};
         const totalQuestions = parseInt('{{ count($questions) }}');
         let answeredQuestions = 0;
 
-        document.querySelectorAll('.answer-option').forEach(button => {
+        // CSRF Token
+        const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
+        if (!csrfTokenElement) {
+            alert('CSRF token not found! Please refresh the page.');
+            return;
+        }
+        const csrfToken = csrfTokenElement.getAttribute('content');
+
+        const answerOptions = document.querySelectorAll('.answer-option');
+        console.log('Found answer options:', answerOptions.length);
+
+        answerOptions.forEach((button, index) => {
             button.addEventListener('click', function() {
+                console.log('Button clicked!', this);
+                
                 const questionCard = this.closest('.question-card');
                 const questionId = questionCard.dataset.questionId;
                 const value = this.dataset.value;
+                
+                console.log('Question ID:', questionId, 'Value:', value);
 
-                // Hapus 'selected' dari semua jawaban di satu soal
+                // Visual feedback
                 questionCard.querySelectorAll('.answer-option').forEach(opt => {
                     opt.classList.remove('selected');
                 });
-
-                // Tambah class 'selected' ke tombol yang diklik
                 this.classList.add('selected');
 
                 if (!answers[questionId]) {
@@ -79,33 +94,139 @@
                 }
                 answers[questionId] = value;
 
+                // Submit answer dengan detailed logging
+                submitSingleAnswer(questionId, value);
+
                 updateProgress();
 
                 if (answeredQuestions === totalQuestions) {
                     document.getElementById('submit-btn').disabled = false;
+                    console.log('All questions answered, submit button enabled');
                 }
             });
         });
 
-        function updateProgress() {
-            const percentage = Math.round((answeredQuestions / totalQuestions) * 100);
-            document.getElementById('progress-text').textContent = percentage + '%';
-            document.getElementById('progress-fill').style.width = percentage + '%';
-            document.getElementById('progress-detail').textContent = `${answeredQuestions} of ${totalQuestions} questions completed`;
+        function submitSingleAnswer(questionId, answerValue) {
+            console.log('=== SUBMITTING ANSWER ===');
+            console.log('Question ID:', questionId);
+            console.log('Answer Value:', answerValue);
+            console.log('URL:', '{{ route("test.submit-answer") }}');
+            
+            fetch('{{ route("test.submit-answer") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify({
+                    question_id: questionId,
+                    answer: answerValue
+                })
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+                return response.json();
+            })
+            .then(data => {
+                console.log('=== RESPONSE DATA ===');
+                console.log('Full response:', data);
+                console.log('Status:', data.status);
+                console.log('User ID:', data.user_id);
+                console.log('Attempt:', data.attempt);
+                console.log('Answer ID:', data.answer_id);
+                
+                if (data.status === 'success') {
+                    showSuccessMessage();
+                } else {
+                    console.error('Error saving answer:', data);
+                    alert('Error saving answer: ' + JSON.stringify(data));
+                }
+            })
+            .catch(error => {
+                console.error('Network error:', error);
+                alert('Network error: ' + error.message);
+            });
         }
 
-        document.getElementById('submit-btn').addEventListener('click', function() {
-            this.disabled = true;
-            this.textContent = 'Submitting...';
+        function showSuccessMessage() {
+            const successMsg = document.getElementById('success-message');
+            if (successMsg) {
+                successMsg.style.display = 'block';
+                setTimeout(() => {
+                    successMsg.style.display = 'none';
+                }, 2000);
+            }
+        }
 
-            document.getElementById('success-message').style.display = 'block';
+        function updateProgress() {
+            const percentage = Math.round((answeredQuestions / totalQuestions) * 100);
+            console.log('Updating progress:', percentage + '%');
+            
+            const progressText = document.getElementById('progress-text');
+            const progressFill = document.getElementById('progress-fill');
+            const progressDetail = document.getElementById('progress-detail');
+            
+            if (progressText) progressText.textContent = percentage + '%';
+            if (progressFill) progressFill.style.width = percentage + '%';
+            if (progressDetail) progressDetail.textContent = `${answeredQuestions} of ${totalQuestions} questions completed`;
+        }
 
-            setTimeout(() => {
-                this.textContent = 'Answers Submitted Successfully!';
-                this.style.background = 'var(--green-soft)';
-            }, 1000);
-        });
+        // Submit test with detailed logging
+        const submitBtn = document.getElementById('submit-btn');
+        if (submitBtn) {
+            submitBtn.addEventListener('click', function() {
+                console.log('=== SUBMITTING TEST ===');
+                console.log('Answers collected:', answers);
+                console.log('Total answered:', answeredQuestions);
+                console.log('Submit URL:', '{{ route("test.submit") }}');
+                
+                this.disabled = true;
+                this.textContent = 'Processing...';
+
+                fetch('{{ route("test.submit") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({
+                        answers: answers
+                    })
+                })
+                .then(response => {
+                    console.log('Submit response status:', response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('=== SUBMIT RESPONSE ===');
+                    console.log('Full response:', data);
+                    
+                    if (data.status === 'success') {
+                        this.textContent = 'Redirecting to Results...';
+                        this.style.background = 'var(--green-soft)';
+                        
+                        console.log('Redirecting to:', data.redirect_url);
+                        setTimeout(() => {
+                            window.location.href = data.redirect_url;
+                        }, 1000);
+                    } else {
+                        console.error('Submit error:', data);
+                        this.textContent = 'Error - Please try again';
+                        this.disabled = false;
+                        this.style.background = 'var(--red-soft)';
+                        alert('Submit error: ' + (data.message || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Submit network error:', error);
+                    this.textContent = 'Network Error - Please try again';
+                    this.disabled = false;
+                    this.style.background = 'var(--red-soft)';
+                    alert('Network error: ' + error.message);
+                });
+            });
+        }
     });
 </script>
-
 @endsection

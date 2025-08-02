@@ -379,8 +379,8 @@
 
     <!-- Action Buttons -->
     <div class="action-buttons">
-        <a href="" class="btn-primary">🔄 Ulangi Test</a>
-        <a href="" class="btn-secondary">⬅️ Kembali ke Beranda</a>
+        <a href="{{ route('test.retake') }}" class="btn-primary">🔄 Ulangi Test</a>
+        <!-- <a href="{{ route('hei-personality-test') }}" class="btn-secondary">⬅️ Kembali ke Beranda</a> -->
     </div>
 </div>
 @endsection

@@ -6,67 +6,208 @@ use Illuminate\Http\Request;
 use App\Models\Question;
 use App\Models\Answer;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class TestController extends Controller
 {
     public function index()
     {
-        // Ambil pertanyaan yang aktif
+        // Initialize session for current user
+        $this->initializeTemporarySession();
+        
+        // Get active questions
         $questions = Question::where('is_active', true)->orderBy('order')->get();
 
         return view('test', compact('questions'));
+    }
+
+    /**
+     * Initialize temporary session for current user
+     * TODO: Replace with auth()->id() when proper session implementation is ready
+     */
+    private function initializeTemporarySession()
+    {
+        if (!session()->has('current_test_user_id')) {
+            if (Auth::check()) {
+                $userId = Auth::id();
+                session(['current_test_user_id' => $userId]);
+                
+                $currentAttempt = $this->determineCurrentAttempt($userId);
+                session(['current_attempt' => $currentAttempt]);
+            } else {
+                abort(401, 'Please login first');
+            }
+        } else {
+            if (!session()->has('current_attempt')) {
+                $userId = session('current_test_user_id');
+                $currentAttempt = $this->determineCurrentAttempt($userId);
+                session(['current_attempt' => $currentAttempt]);
+            }
+        }
     }
 
     public function submitAnswer(Request $request)
     {
         $request->validate([
             'question_id' => 'required|exists:questions,id',
-            'answer' => 'required|in:1,2,3,4,5' // 1=Strongly Disagree, 5=Strongly Agree
+            'answer' => 'required|in:1,2,3,4,5'
         ]);
+        
+        $this->initializeTemporarySession();
+        $userId = (int) session('current_test_user_id');
+        $attempt = (int) session('current_attempt');
+        $questionId = (int) $request->question_id;
+        $answerValue = (int) $request->answer;
+        
+        try {
+            $answer = \DB::transaction(function () use ($userId, $questionId, $attempt, $answerValue) {
+                // Check for existing answer with row lock
+                $existing = \DB::table('answers')
+                              ->where('user_id', $userId)
+                              ->where('question_id', $questionId)
+                              ->where('attempt', $attempt)
+                              ->lockForUpdate()
+                              ->first();
+                
+                if ($existing) {
+                    // Update existing answer
+                    \DB::table('answers')
+                      ->where('id', $existing->id)
+                      ->update([
+                          'answer_value' => $answerValue,
+                          'answered_at' => now(),
+                          'updated_at' => now()
+                      ]);
+                    
+                    return Answer::find($existing->id);
+                } else {
+                    // Create new answer
+                    $answerId = \DB::table('answers')->insertGetId([
+                        'user_id' => $userId,
+                        'question_id' => $questionId,
+                        'attempt' => $attempt,
+                        'answer_value' => $answerValue,
+                        'answered_at' => now(),
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ]);
+                    
+                    return Answer::find($answerId);
+                }
+            });
+            
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Answer submitted successfully',
+                'user_id' => $userId,
+                'attempt' => $attempt,
+                'answer_id' => $answer->id
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to save answer'
+            ], 500);
+        }
+    }
+
+    public function submitTest(Request $request)
+    {
+        $this->initializeTemporarySession();
+        $userId = session('current_test_user_id');
+        $attempt = (int) session('current_attempt');
+        
+        // Validate all questions are answered
+        $totalQuestions = Question::where('is_active', true)->count();
+        $answeredQuestions = Answer::where('user_id', (int) $userId)
+                                  ->where('attempt', (int) $attempt)
+                                  ->count();
+        
+        if ($answeredQuestions < $totalQuestions) {
+            return response()->json([
+                'status' => 'error',
+                'message' => "Please answer all questions before submitting. Answered: {$answeredQuestions}/{$totalQuestions}"
+            ], 422);
+        }
+        
+        // Clear session after successful submission
+        session()->forget(['current_test_user_id', 'current_attempt']);
         
         return response()->json([
             'status' => 'success',
-            'message' => 'Answer submitted successfully'
+            'redirect_url' => route('test.result', ['user' => $userId, 'attempt' => $attempt])
         ]);
     }
 
     /**
-     * Show test result for specific user and attempt
+     * Determine current attempt number for user
      */
+    private function determineCurrentAttempt($userId)
+    {
+        // Handle forced new attempt (from retake)
+        if (session('force_new_attempt')) {
+            session()->forget('force_new_attempt');
+            
+            $latestAttempt = Answer::where('user_id', $userId)->max('attempt');
+            return $latestAttempt ? (int) $latestAttempt + 1 : 1;
+        }
+        
+        // Check latest attempt
+        $latestAttempt = Answer::where('user_id', $userId)->max('attempt');
+        
+        if ($latestAttempt) {
+            // Check if latest attempt is complete
+            $totalQuestions = Question::where('is_active', true)->count();
+            $answeredInLatestAttempt = Answer::where('user_id', $userId)
+                                           ->where('attempt', (int) $latestAttempt)
+                                           ->count();
+            
+            // If latest attempt is complete, create new attempt
+            if ($answeredInLatestAttempt >= $totalQuestions) {
+                return (int) $latestAttempt + 1;
+            }
+            
+            // Continue with current attempt
+            return (int) $latestAttempt;
+        }
+        
+        // First attempt
+        return 1;
+    }
+
     public function showResult($userId, $attempt = 1)
     {
-        // Cari user berdasarkan ID
+        // Basic authorization check
+        if (session('current_test_user_id') != $userId && !Auth::check()) {
+            abort(403, 'Unauthorized access');
+        }
+        
         $user = User::find($userId);
         
-        // if (!$user) {
-        //     return redirect()->route('test')->with('error', 'User tidak ditemukan');
-        // }
+        if (!$user) {
+            return redirect()->route('test')->with('error', 'User tidak ditemukan');
+        }
 
-        // Ambil jawaban user untuk attempt tertentu
         $answers = Answer::where('user_id', $userId)
                         ->where('attempt', $attempt)
                         ->with(['question'])
                         ->orderBy('created_at', 'asc')
                         ->get();
 
-        // if ($answers->isEmpty()) {
-        //     return redirect()->route('test')->with('error', 'Tidak ada data hasil test untuk user ini');
-        // }
+        if ($answers->isEmpty()) {
+            return redirect()->route('test')->with('error', 'Tidak ada data hasil test untuk user ini');
+        }
 
-        // Hitung statistik per kategori
         $categoryResults = $this->calculateCategoryResults($answers);
-        
-        // Tentukan kepribadian dominan
         $dominantPersonality = $this->getDominantPersonality($categoryResults);
         
-        // Ambil semua attempts yang tersedia untuk user ini
         $availableAttempts = Answer::where('user_id', $userId)
                                   ->select('attempt')
                                   ->distinct()
                                   ->orderBy('attempt')
                                   ->pluck('attempt');
 
-        // Data untuk view
         $data = [
             'user' => $user,
             'answers' => $answers,
@@ -84,9 +225,18 @@ class TestController extends Controller
         return view('test-result', $data);
     }
 
-    /**
-     * Calculate results per category
-     */
+    public function retakeTest()
+    {
+        if (!Auth::check()) {
+            return redirect()->route('hei-personality-test')->with('error', 'Please login first');
+        }
+
+        session()->forget('current_test_user_id');
+        session(['force_new_attempt' => true]);
+        
+        return redirect()->route('test')->with('info', 'Memulai test baru...');
+    }
+
     private function calculateCategoryResults($answers)
     {
         $categories = ['H', 'E', 'I'];
@@ -113,23 +263,17 @@ class TestController extends Controller
         return $results;
     }
 
-    /**
-     * Get dominant personality based on highest average
-     */
     private function getDominantPersonality($categoryResults)
     {
         $highest = collect($categoryResults)->sortByDesc('average');
         
         if ($highest->isEmpty()) {
-            return 'H'; // Default
+            return 'H';
         }
 
         return $highest->keys()->first();
     }
 
-    /**
-     * Get category name
-     */
     private function getCategoryName($category)
     {
         $names = [
@@ -141,9 +285,6 @@ class TestController extends Controller
         return $names[$category] ?? 'Unknown';
     }
 
-    /**
-     * Get score level description
-     */
     private function getScoreLevel($average)
     {
         if ($average >= 4.5) return 'Sangat Tinggi';
@@ -155,9 +296,6 @@ class TestController extends Controller
         return 'Sangat Rendah';
     }
 
-    /**
-     * Get personality description
-     */
     private function getPersonalityDescription($personality)
     {
         $descriptions = [
@@ -199,9 +337,6 @@ class TestController extends Controller
         return $descriptions[$personality] ?? $descriptions['H'];
     }
 
-    /**
-     * Get answer distribution (1-5 scale)
-     */
     private function getAnswerDistribution($answers)
     {
         $distribution = [];
@@ -219,9 +354,6 @@ class TestController extends Controller
         return $distribution;
     }
 
-    /**
-     * Get answer label
-     */
     private function getAnswerLabel($value)
     {
         $labels = [

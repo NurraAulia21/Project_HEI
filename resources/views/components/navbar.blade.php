@@ -76,7 +76,9 @@
         <!-- <button id="take-test-btn" class="main-action-btn" style="margin-left: 610px; height: 50px; padding-top: 13px;">
             Login
         </button> -->
-         @if (Auth::check() && Request::is('test'))
+        
+        {{-- Tampilkan logout jika user sudah login DAN sedang di halaman test atau test-result --}}
+        @if (Auth::check() && (Request::is('test') || Request::is('test/result/*')))
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" class="logout main-action-btn">Logout</button>
