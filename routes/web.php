@@ -1,12 +1,50 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\TestController;
 use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Dashboard\AdminController;
 use App\Http\Controllers\Dashboard\QuestionController;
 use App\Http\Controllers\Dashboard\AnswerController;
-use App\Http\Controllers\TestController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Laravel\Socialite\Facades\Socialite;
+
+/*
+|--------------------------------------------------------------------------
+| Root and Landing Routes
+|--------------------------------------------------------------------------
+*/
+
+// Root redirect
+Route::get('/', function () {
+    return redirect()->route('hei-personality-test');
+});
+
+// Landing page
+Route::get('/HEI-personality-test', function () {
+    return view('landing-page');
+})->name('hei-personality-test');
+
+/*
+|--------------------------------------------------------------------------
+| Authentication Routes (Branch nurraaulia)
+|--------------------------------------------------------------------------
+*/
+
+Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::post('/register', [AuthController::class, 'register'])->name('register');
+Route::post('/logout', function (Request $request) {
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    return redirect('/HEI-personality-test');
+})->name('logout');
+
+// Google OAuth
+Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('google.login');
+Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 
 /*
 |--------------------------------------------------------------------------
@@ -14,9 +52,14 @@ use Illuminate\Http\Request;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/test', [TestController::class, 'index'])->name('test');
+Route::get('/test', [TestController::class, 'index'])->middleware('auth')->name('test');
 Route::post('/test/submit-answer', [TestController::class, 'submitAnswer'])->name('test.submit-answer');
 Route::get('/test/result/{user}/{attempt?}', [TestController::class, 'showResult'])->name('test.result');
+
+// MBTI Result Page
+// Route::get('/mbti/intj-architect', function () {
+//     return view('mbti.intj-architect');
+// })->name('mbti.intj-architect');
 
 /*
 |--------------------------------------------------------------------------
@@ -45,7 +88,6 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
     // Toggle status route (AJAX)
     Route::post('/{question}/toggle', [DashboardController::class, 'toggleStatus'])->name('toggle');
 });
-
 
 /*
 |--------------------------------------------------------------------------
