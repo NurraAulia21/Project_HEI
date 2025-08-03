@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Question;
+use Illuminate\Support\Facades\Auth;
 
 class TestController extends Controller
 {
@@ -14,6 +15,13 @@ class TestController extends Controller
                            ->ordered()
                            ->limit(5)
                            ->get();
+        
+        \Log::debug('Test Page User:', [
+            'auth' => Auth::check(),
+            'user' => Auth::user(),
+            'session_id' => session()->getId(),
+        ]);
+
 
         return view('test', compact('questions'));
     }

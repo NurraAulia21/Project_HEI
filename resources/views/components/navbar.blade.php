@@ -76,10 +76,10 @@
         <!-- <button id="take-test-btn" class="main-action-btn" style="margin-left: 610px; height: 50px; padding-top: 13px;">
             Login
         </button> -->
-         @if (Auth::check() && Request::is('test'))
-            <form method="POST" action="{{ route('logout') }}">
+        @if(Auth::check() && Request::is('test'))
+            <form action="{{ route('logout') }}" method="POST">
                 @csrf
-                <button type="submit" class="logout main-action-btn">Logout</button>
+                <button type="submit" class="logout main-action-btn" style="margin-left: 730px; margin-top: 15px;">Logout</button>
             </form>
         @endif
     </div>

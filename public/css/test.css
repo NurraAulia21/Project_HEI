@@ -10,9 +10,30 @@ body {
     font-family: 'Inter', sans-serif;
     background: #e6e7ee;
     min-height: 100vh;
-    padding: 2rem;
+    padding-top: 70px;
 }
-
+.navbar {
+    position: fixed; /* Biar menempel di atas */
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000; /* Supaya tidak ketutup konten */
+    background: white; /* Biar tidak transparan */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.main-action-btn {
+    height: 40px;
+    padding: 0.5rem 2rem;
+    background: #a78bfa;
+    color: #fff;
+    border-radius: 999px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    box-shadow: 0 4px 16px rgba(124,58,237,0.12);
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+}
 :root {
     --bg-primary: #e6e7ee;
     --bg-card: #e6e7ee;

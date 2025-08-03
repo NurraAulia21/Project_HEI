@@ -54,6 +54,12 @@
 @endsection
 
 @section('scripts')
+    @if (session('set_hei_logged_in'))
+    <script>
+        sessionStorage.setItem("hei_logged_in", true);
+    </script>
+    @endif
+
     <script>
     document.addEventListener('DOMContentLoaded', function () {
         const answers = {};
