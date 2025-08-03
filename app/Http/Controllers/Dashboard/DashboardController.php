@@ -4,13 +4,59 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Models\Question;
+use App\Models\Admin;
+use App\Models\User;
+use App\Models\Answer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
     /**
-     * Display dashboard with questions list
+     * Display admin dashboard with overview statistics
+     */
+    public function adminIndex()
+    {
+        // Statistik untuk dashboard utama
+        $stats = [
+            'total_questions' => Question::count(),
+            'active_questions' => Question::where('is_active', true)->count(),
+            'total_admins' => Admin::count(),
+            'active_admins' => Admin::where('is_active', true)->count(),
+            'total_users' => User::count(),
+            'total_answers' => Answer::count(),
+            'users_completed' => Answer::select('user_id')->distinct()->count(),
+        ];
+
+        // Statistik per kategori
+        $categoryStats = [
+            'harmony' => Question::where('category', 'H')->count(),
+            'excellence' => Question::where('category', 'E')->count(),
+            'integrity' => Question::where('category', 'I')->count(),
+        ];
+
+        // Recent activities (5 jawaban terbaru)
+        $recentAnswers = Answer::with(['user', 'question'])
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
+
+        // Data untuk chart (jawaban per hari dalam 7 hari terakhir)
+        $chartData = Answer::select(
+                DB::raw('DATE(created_at) as date'),
+                DB::raw('COUNT(*) as count')
+            )
+            ->where('created_at', '>=', now()->subDays(7))
+            ->groupBy('date')
+            ->orderBy('date', 'asc')
+            ->get();
+
+        return view('admin.dashboard', compact('stats', 'categoryStats', 'recentAnswers', 'chartData'));
+    }
+
+    /**
+     * Display dashboard with questions list (method lama, masih dipertahankan)
      */
     public function index()
     {

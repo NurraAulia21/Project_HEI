@@ -3,22 +3,41 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use App\Models\Admin;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\DB;
 
 class AdminSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     */
     public function run(): void
     {
-        DB::table('admins')->insert([
+        // Admin utama
+        Admin::create([
             'username' => 'admin',
-            'name'     => 'Super Admin',
-            'email'    => 'admin@gmail.com',
-            'password' => Hash::make('admin123'),
-            'is_active'=> true,
-            'last_login_at' => now(),
-            'created_at' => now(),
-            'updated_at' => now(),
+            'name' => 'Administrator',
+            'email' => 'admin@hei-assessment.com',
+            'password' => 'admin123', // akan di-hash otomatis oleh mutator
+            'is_active' => true,
+        ]);
+
+        // Admin kedua untuk testing
+        Admin::create([
+            'username' => 'admin2',
+            'name' => 'Admin Kedua',
+            'email' => 'admin2@hei-assessment.com', 
+            'password' => 'admin456',
+            'is_active' => true,
+        ]);
+
+        // Admin yang tidak aktif untuk testing
+        Admin::create([
+            'username' => 'admin_inactive',
+            'name' => 'Admin Tidak Aktif',
+            'email' => 'inactive@hei-assessment.com',
+            'password' => 'inactive123',
+            'is_active' => false,
         ]);
     }
 }
