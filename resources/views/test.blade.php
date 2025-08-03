@@ -57,7 +57,7 @@
     <script>
     document.addEventListener('DOMContentLoaded', function () {
         console.log('DOM loaded, starting test functionality');
-        
+
         const answers = {};
         const totalQuestions = parseInt('{{ count($questions) }}');
         let answeredQuestions = 0;
