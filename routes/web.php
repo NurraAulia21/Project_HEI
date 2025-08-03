@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Dashboard\AdminController;
@@ -121,6 +122,19 @@ Route::prefix('admin')->name('admin.')->group(function () {
     })->name('logout');
 });
 
-Route::get('admin/login', function () {
-    return 'Admin Login page - will be integrated with AuthController';
-})->name('admin.login');
+// Route::get('admin/login', function () {
+//     return 'Admin Login page - will be integrated with AuthController';
+// })->name('admin.login');
+
+/*
+|--------------------------------------------------------------------------
+| Admin Login Routes
+|--------------------------------------------------------------------------
+*/
+Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
+Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
+Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
+
+Route::middleware(['web','auth:admin'])->group(function () {
+    Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.index');
+});
