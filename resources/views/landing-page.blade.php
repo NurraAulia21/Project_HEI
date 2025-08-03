@@ -47,7 +47,7 @@
             </div>
             <p class="or-divider" style="font-size: small;">Or Login via Google</p>
             <a href="{{ route('google.login') }}" class="form-btn google-btn" style="padding: 0px;width: 100%;display: flex;align-items: center;justify-content: center;">
-                <img src="img/google.png" alt="Google Logo" style="width:40px;height:40px;">
+                <img src="/img/google.png" alt="Google Logo" style="width:40px;height:40px;">
                 <span style="text-decoration:none;color:#fff;font-weight:400">Login with Google</span>
             </a>
         </div>
@@ -137,7 +137,7 @@
                 </p>
             </div>
             <div class="highlight-image">
-                <img src="img/hei-dummy.png" alt="Illustration" />
+                <img src="/img/hei-dummy.png" alt="Illustration" />
             </div>
         </div>
     </section>

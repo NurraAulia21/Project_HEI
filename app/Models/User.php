@@ -46,4 +46,18 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // TAMBAHKAN RELATIONSHIP INI
+    public function answers()
+    {
+        return $this->hasMany(\App\Models\Answer::class);
+    }
+
+    // Method helper untuk mendapatkan jawaban berdasarkan kategori
+    public function getAnswersByCategory($category)
+    {
+        return $this->answers()->whereHas('question', function ($q) use ($category) {
+            $q->where('category', $category);
+        })->get();
+    }
 }
