@@ -14,14 +14,15 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Seeder yang sudah ada sebelumnya
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // User::factory()->create([
+        //     'name' => 'Test User',
+        //     'email' => 'test@example.com',
+        // ]);
 
         // Seeder baru untuk admin dan answers
         $this->call([
             AdminSeeder::class,
+            QuestionSeeder::class,
             AnswerSeeder::class,
         ]);
     }

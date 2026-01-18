@@ -56,7 +56,7 @@ class AuthController extends Controller
     {
         return Socialite::driver('google')
             //->with(['prompt' => 'select_account', 'hd' => 'student.telkomuniversity.ac.id']) //kalau mau pake sso
-            //->with(['prompt' => 'select_account']) // email pribadi
+            ->with(['prompt' => 'select_account']) // email pribadi
             //Tidak memakai with jika ingin hanya login meggunakan akun google untuk pertama kali
             ->redirect();
     }
